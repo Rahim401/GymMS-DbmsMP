@@ -1,0 +1,26 @@
+
+CREATE DATABASE GymDb;
+
+USE GymDb;
+
+CREATE TABLE Members (
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) PRIMARY KEY,
+    password VARCHAR(255),
+    startDate DATE
+);
+
+CREATE TABLE Trainers (
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) PRIMARY KEY,
+    password VARCHAR(255),
+    startDate DATE
+);
+
+CREATE TABLE Admins (
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) PRIMARY KEY,
+    password VARCHAR(255)
+);
+
+insert into Admins values("Bailvan", "Bailvan@gym.com", "121");
