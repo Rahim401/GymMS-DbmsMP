@@ -1,0 +1,8 @@
+
+
+delete from Members;
+delete from Trainers;
+delete from Specialities;
+delete from TrainerSpecialities;
+delete from Memberships;
+delete from MemberPayments;

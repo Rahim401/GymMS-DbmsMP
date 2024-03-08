@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Member Dashboard</title>
+        <title>Admin Dashboard</title>
         <style>
             * {
                 margin: 0;
@@ -207,81 +207,90 @@
                 alert("Logging out...");
                 goToPage("{{ url_for('index') }}");
             }
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelector('.member-widget1 form').addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    if (confirm('Are you sure, You want to Clear Data of the Gym?')) event.target.submit();
+                    else return false;
+                });
+            });
         </script>
     </head>
     <body>
         <header>
-            <h1>Member Dashboard</h1>
+            <h1>Admin Dashboard</h1>
             <div class="member-widget1">
-                <button class="smButton">Quit Gym</button>
+                <form action="{{ url_for('killDatabase') }}" method="POST">
+                    <input type="hidden" name="redirectTo" value="index" />
+                    <button type="submit" class="smButton">Kill Database</button>
+                </form>
             </div>
             <div class="member-widget">
-                <span class="member-name">{{ memberDetails[1] }}</span>
+                <span class="member-name">{{ adminDetails[1] }}</span>
                 <button class="smButton" onclick="logout()">Logout</button>
             </div>
         </header>
         <div class="container">
             <div class="section">
                 <div class="card">
-                    <h2>Member Details</h2>
+                    <h2>Admin Details</h2>
                     <ul>
-                        <strong>Name:</strong> {{ memberDetails[1] }}<br>
-                        <strong>Email:</strong> {{ memberDetails[2] }}<br>
-                        <strong>Joined Gym:</strong> {{ memberDetails[5] }}<br>
-                        <strong>Subscription ends at:</strong> {{ memberDetails[6] }}<br>
+                        <strong>Name:</strong> {{ adminDetails[1] }}<br>
+                        <strong>Email:</strong> {{ adminDetails[2] }}<br>
                     </ul>
                 </div>
+                {% if memberDetails or trainerDetails %}
                 <div class="card">
-                    <h2>Assigned Trainer</h2>
-                    {% if trainerDetails %}
-                        <strong>Name:</strong> {{ trainerDetails[0][1] }}<br>
-                        <strong>Email:</strong> {{ trainerDetails[0][2] }}<br>
-                        <strong>Working From:</strong> {{ trainerDetails[0][4] }}<br>
-                        <strong>Specialities:</strong>
-                        {% for special in trainerDetails[1] %}
-                            {{ special[0] }},
-                        {% endfor %}
-                        <br>
-                    {% else %}
-                        <p>No trainer assigned.</p>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="section">
-                <div class="card">
-                    <h2>Payment Section</h2>
-                    <form id="paymentForm" action="{{ url_for('makePayment') }}" method="POST">
+                    <h2>Delete User</h2>
+                    <form id="deleteUserForm" action="{{ url_for('removeUser') }}" method="POST">
+                        <input type="hidden" name="redirectTo" value="adminPage" />
                         <div>
-                            <label for="membershipType">Select Membership Type:</label>
-                            <select id="membershipType" name="membershipType"
-                                    onchange="setMShipPrice(membershipList[this.selectedIndex]);">
-                            {% for membership in membershipsAvailable %}
-                                <option value="{{ membership[0] }}">
-                                    {{membership[1]}} : {{membership[2]}} month
+                            <strong>Select User:</strong>
+                            <select id="userId" name="userId">
+                            {% for member in memberDetails %}
+                                <option value="Members {{member[0]}}">
+                                    Member: {{member[1]}} at {{member[2]}}
+                                </option>
+                            {% endfor %}
+                            {% for trainer in trainerDetails %}
+                                <option value="Trainers {{trainer[0]}}">
+                                    Trainer: {{trainer[1]}} at {{trainer[2]}}
                                 </option>
                             {% endfor %}
                             </select>
-                            <br><br>
                         </div>
-                        <div>
-                            <label for="membershipPrice">Amount:</label>
-                            <input id="membershipPrice" name="membershipPrice" type="text" readonly>
-                        </div>
-                        <br>
-                        <div>
-                            <input type="submit" value="Make Payment" class="smButton">
+                        <div style="margin-top:20px;">
+                            <input type="submit" value="Delete User" class="smButton">
                         </div>
                     </form>
                 </div>
+                {% endif %}
+                <div class="card">
+                    <h2>All Trainers</h2>
+                    {% if trainerDetails %}
+                        {% for trainer in trainerDetails %}
+                            <strong>Name:</strong> {{ trainer[1] }}<br>
+                            <strong>Email:</strong> {{ trainer[2] }}<br>
+                            <strong>Working From:</strong> {{ trainer[4] }}<br>
+                            <strong>Specialities:</strong>
+                            {% for special in trainer[5] %}
+                                {{ special[1] }},
+                            {% endfor %}
+                        <br><br>
+                        {% endfor %}
+                    {% else %}
+                        <p>No trainer in Gym</p>
+                    {% endif %}
+                </div>
 
+                {% if paymentDetails %}
                 <div class="card">
                     <h2>Payment Details</h2>
                     <table>
                         <tr>
                             <th>Payment ID</th>
                             <th>Time</th>
-                            <th>Membership</th>
+                            <th>Payed By</th>
                             <th>Money Payed</th>
                         </tr>
 
@@ -295,6 +304,58 @@
                         {% endfor %}
                     </table>
                     <br>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="section">
+                {% if memberDetails and trainerDetails %}
+                <div class="card">
+                    <h2>Assign Trainer</h2>
+                    <form id="assignTrainerForm" action="{{ url_for('assignTrainer') }}" method="POST">
+                        <input type="hidden" name="redirectTo" value="adminPage" />
+                        <div>
+                            <strong>Select Member:</strong>
+                            <select name="userId">
+                            {% for member in memberDetails %}
+                                <option value="{{member[0]}}">
+                                    {{member[1]}} at {{member[2]}}
+                                </option>
+                            {% endfor %}
+                            </select>
+                        </div>
+                        <div style="margin-top:15px;">
+                            <strong>Select Trainer:</strong>
+                            <select name="trainerId">
+                            {% for trainer in trainerDetails %}
+                                <option value="{{trainer[0]}}">
+                                    {{trainer[1]}} at {{trainer[2]}}
+                                </option>
+                            {% endfor %}
+                            </select>
+                        </div>
+                        <div style="margin-top:20px;">
+                            <input type="submit" value="Assign Trainer" class="smButton">
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
+                <div class="card">
+                    <h2>All Members</h2>
+                    {% if memberDetails %}
+                        {% for member in memberDetails %}
+                            <strong>Name:</strong> {{ member[1] }}<br>
+                            <strong>Email:</strong> {{ member[2] }}<br>
+                            {% if member[7] %} <strong>Trainer:</strong> {{ member[7]}}<br>
+                            {% else %} <strong>Trainer:</strong> Not Assigned<br>
+                            {% endif %}
+                            <strong>Joined On:</strong> {{ member[5] }}<br>
+                            <strong>Subscription Ends At:</strong> {{ member[6] }}<br>
+                        <br>
+                        {% endfor %}
+                    {% else %}
+                        <p>No Member in Gym</p>
+                    {% endif %}
                 </div>
             </div>
 

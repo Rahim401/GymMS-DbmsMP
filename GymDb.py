@@ -9,6 +9,7 @@ class GymDb:
     DbMakeFile = "makers\\GymDbTables.txt"
     DbProcedureFile = "makers\\GymProcedures.txt"
     DbInitializerFile = "makers\\GymInitializers.txt"
+    DbDeleterFile = "makers\\GymDbDelete.txt"
 
     def __init__(self, sqlConn:Connection):
         self.sqlConn = sqlConn
@@ -59,7 +60,7 @@ class GymDb:
     def insertMember(self, name, email, password, trainedBy=None, startDate=date.today(), expiresAt=None, howToHandle="print"):
         expiresAt = "Null" if expiresAt is None else f"'{expiresAt}'"
         if trainedBy is None: trainedBy = "Null"
-        statement = f"INSERT INTO Members (name, email, password, trainerId, startDate, expiresAt) VALUES " \
+        statement = f"INSERT INTO Members (name, email, password, trainedBy, startDate, expiresAt) VALUES " \
                     f"('{name}', '{email}', '{password}', {trainedBy}, '{startDate}', {expiresAt});"
         self.executeStatement(statement, commit=True, howToHandle=howToHandle)
     def insertTrainers(self, name, email, password, startDate=date.today(), howToHandle="print"):
@@ -72,6 +73,9 @@ class GymDb:
         self.executeStatement(statement, commit=True, howToHandle=howToHandle)
     def insertSpeciality(self, trainerId, specialityId, howToHandle="print"):
         statement = f"insert into TrainerSpecialities values({trainerId}, {specialityId});"
+        self.executeStatement(statement, commit=True, howToHandle=howToHandle)
+    def updateTrainer(self, userId, trainerId, howToHandle="print"):
+        statement = f"update members set trainedBy={trainerId} where id={userId};"
         self.executeStatement(statement, commit=True, howToHandle=howToHandle)
 
     def getUserBy(self, userId=None, email=None, userType="Admins"):
@@ -119,18 +123,23 @@ class GymDb:
             )
             return member, trainer, paymentList
         return None, None, None
-
+    def getTrainerOf(self, memberId):
+        return self.doQuery(
+            f"Select t.name From Members m, Trainers t "
+            f"where m.id={memberId} and m.trainedBy=t.id;",
+            getFirst=True
+        )
     def getAllData(self):
         allMembers = self.doQuery(f"Select * From Members;")
+        trainerOfMembers = [self.getTrainerOf(members[0]) for members in allMembers]
         allTrainers = self.doQuery(f"Select * From Trainers;")
         allSpecialities = [self.getSpecialityOfTrainer(trainers[0]) for trainers in allTrainers]
         allPayments = self.doQuery(
             f"Select mp.id,m.name,mp.payedMoney,mp.paymentAt "
             f"From MemberPayments mp, Members m where mp.memberId=m.id;"
         )
-        return allMembers, [(*x,y) for x,y in zip(allTrainers, allSpecialities)], allPayments
-
-
+        return [(*x,y[0] if y is not None else y) for x,y in zip(allMembers, trainerOfMembers)], \
+            [(*x,y) for x,y in zip(allTrainers, allSpecialities)], allPayments
     def getUserIfExists(self, email, password, howToHandle="print"):
         for userType in ("Admins", "Members", "Trainers"):
             query = f"Select * From {userType} Where email='{email}' and password='{password}';"
@@ -138,5 +147,21 @@ class GymDb:
             if result is not None: return userType, result
         return None, None
 
+    def dropUserBy(self, userId=None, email=None, userType="Admins"):
+        if userId is not None: return self.executeStatement(
+            f"delete From {userType} where id = '{userId}';",
+            commit=True
+        )
+        elif email is not None: return self.executeStatement(
+            f"delete From {userType} where email = '{email}';",
+            commit=True
+        )
+        else: return None
+    def dropAdminBy(self, adminId=None, email=None): return self.getUserBy(adminId, email, "Admins")
+    def dropTrainerBy(self, trainerId=None, email=None): return self.getUserBy(trainerId, email, "Trainers")
+    def dropMemberBy(self, memberId=None, email=None): return self.getUserBy(memberId, email, "Members")
+
+    def dropAll(self):
+        self.executeFile(GymDb.DbDeleterFile, withCommit=True)
     def dropExamBoard(self):
         self.executeStatement(f"drop database {GymDb.DbName};", howToHandle="none")

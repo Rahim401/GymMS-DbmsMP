@@ -24,7 +24,7 @@ CREATE TABLE Members (
     email VARCHAR(255) unique,
     password VARCHAR(255), trainedBy int,
     startDate DATE, expiresAt Date,
-    foreign key(trainedBy) references Trainers(id)
+    foreign key(trainedBy) references Trainers(id) on delete cascade
 );
 
 CREATE TABLE Specialities (
@@ -36,8 +36,8 @@ CREATE TABLE Specialities (
 CREATE TABLE TrainerSpecialities (
     trainerId int, specialityId int,
     unique(trainerId, specialityId),
-    foreign key(trainerId) references Trainers(id),
-    foreign key(specialityId) references Specialities(id)
+    foreign key(trainerId) references Trainers(id) on delete cascade,
+    foreign key(specialityId) references Specialities(id) on delete cascade
 );
 
 CREATE TABLE Memberships (
@@ -49,6 +49,6 @@ CREATE TABLE MemberPayments (
     id int auto_increment PRIMARY KEY,
     memberId int not null, onMembership int not null, payedMoney int,
     paymentAt datetime,
-    foreign key(memberId) references Members(id),
-    foreign key(onMembership) references Memberships(id)
+    foreign key(memberId) references Members(id) on delete cascade,
+    foreign key(onMembership) references Memberships(id) on delete cascade
 );
