@@ -1,0 +1,38 @@
+
+INSERT INTO Specialities (name, description) VALUES('Strength Training', 'Build muscle strength and power through resistance exercises.');
+INSERT INTO Specialities (name, description) VALUES('Cardiovascular Training', 'Improve cardiovascular health and endurance through cardio workouts.');
+INSERT INTO Specialities (name, description) VALUES('Weight Loss Specialist', 'Achieve weight loss goals with personalized exercise programs.');
+INSERT INTO Specialities (name, description) VALUES('Nutrition Specialist', 'Provide guidance on healthy eating habits and nutritional strategies.');
+INSERT INTO Specialities (name, description) VALUES('Injury Rehabilitation', 'Assist in recovering from injuries through targeted exercises and stretching.');
+INSERT INTO Specialities (name, description) VALUES('Sports Performance Specialist', 'Optimize athletic performance with tailored training regimens.');
+
+insert into Memberships(name, forMonths, cost) values("Basic", 1, 300);
+insert into Memberships(name, forMonths, cost) values("Bronze", 3, 550);
+insert into Memberships(name, forMonths, cost) values("Silver", 6, 1000);
+insert into Memberships(name, forMonths, cost) values("Gold", 12, 1500);
+insert into Memberships(name, forMonths, cost) values("Platinum", 48, 6000);
+
+insert into Admins(name, email, password) values("Bailvan", "Bailvan@gym.com", "121");
+
+insert into Trainers(name, email, password, startDate) values("Rangasamy", "Ranga@yahoo", "123", '2024-01-21');
+insert into Trainers(name, email, password, startDate) values("Sham", "Sham@yahoo", "123", '2024-01-21');
+insert into Trainers(name, email, password, startDate) values("Yogi", "Yogi@yahoo", "123", '2024-01-21');
+
+insert into TrainerSpecialities values(1 , 1);
+insert into TrainerSpecialities values(1 , 2);
+insert into TrainerSpecialities values(1 , 5);
+insert into TrainerSpecialities values(2 , 2);
+insert into TrainerSpecialities values(2 , 4);
+insert into TrainerSpecialities values(3 , 3);
+insert into TrainerSpecialities values(3 , 6);
+
+insert into Members(name, email, password, trainedBy, startDate) values("Vijay", "Vijay@yahoo", "123", 1, '2024-01-21');
+insert into Members(name, email, password, trainedBy, startDate) values("Yash", "Yash@yahoo", "123", 1, '2023-01-21');
+insert into Members(name, email, password, trainedBy, startDate) values("Ajay", "aj@yahoo", "123", 2, '2024-01-21');
+insert into Members(name, email, password, trainedBy, startDate) values("Varada Raj", "Raj@yahoo", "123", 3, '2024-01-21');
+
+insert into MemberPayments(memberId, onMembership, payedMoney, paymentAt) values(1, 1, 300, '2023-03-02');
+insert into MemberPayments(memberId, onMembership, payedMoney, paymentAt) values(2, 2, 300, '2023-03-02');
+insert into MemberPayments(memberId, onMembership, payedMoney, paymentAt) values(3, 3, 1000, '2023-03-02');
+insert into MemberPayments(memberId, onMembership, payedMoney, paymentAt) values(3, 2, 1000, '2023-03-02');
+insert into MemberPayments(memberId, onMembership, payedMoney, paymentAt) values(2, 1, 1000, '2023-03-02');

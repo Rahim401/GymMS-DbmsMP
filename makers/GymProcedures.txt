@@ -1,0 +1,27 @@
+
+CREATE PROCEDURE CalcMonthsLeftForMember(IN memberId INT, OUT noOfMonths INT)
+BEGIN
+    DECLARE totalMonths INT DEFAULT 0;
+    SELECT SUM(m.forMonths) INTO totalMonths
+    FROM MemberPayments mp
+    INNER JOIN Memberships m ON mp.onMembership = m.id
+    WHERE mp.memberId = memberId;
+    SET noOfMonths = totalMonths;
+END
+
+CREATE PROCEDURE GetExpDateOfMember(IN memberId INT, OUT expiryDate DATE)
+BEGIN
+    DECLARE noOfMonths INT;
+    CALL CalcMonthsLeftForMember(memberId, noOfMonths);
+    SELECT DATE_ADD(startDate, INTERVAL noOfMonths MONTH) INTO expiryDate FROM Members WHERE id = memberId;
+END
+
+CREATE TRIGGER UpdateSubExpAt
+AFTER INSERT ON MemberPayments FOR EACH ROW
+BEGIN
+    DECLARE lastPaymentMemberId INT;
+    DECLARE expiresAt DATE;
+    SELECT NEW.memberId INTO lastPaymentMemberId FROM MemberPayments WHERE paymentAt = NEW.paymentAt ORDER BY id DESC LIMIT 1;
+    CALL GetExpDateOfMember(NEW.memberId, expiresAt);
+    UPDATE Members SET Members.expiresAt = expiresAt WHERE id = NEW.memberId;
+END

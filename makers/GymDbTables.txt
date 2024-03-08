@@ -1,0 +1,54 @@
+
+CREATE DATABASE GymDb;
+
+USE GymDb;
+
+CREATE TABLE Admins (
+    id int auto_increment PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) unique,
+    password VARCHAR(255)
+);
+
+CREATE TABLE Trainers (
+    id int auto_increment PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) unique,
+    password VARCHAR(255),
+    startDate DATE
+);
+
+CREATE TABLE Members (
+    id int auto_increment PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) unique,
+    password VARCHAR(255), trainedBy int,
+    startDate DATE, expiresAt Date,
+    foreign key(trainedBy) references Trainers(id)
+);
+
+CREATE TABLE Specialities (
+    id int auto_increment PRIMARY KEY,
+    name varchar(50) unique,
+    description varchar(200)
+);
+
+CREATE TABLE TrainerSpecialities (
+    trainerId int, specialityId int,
+    unique(trainerId, specialityId),
+    foreign key(trainerId) references Trainers(id),
+    foreign key(specialityId) references Specialities(id)
+);
+
+CREATE TABLE Memberships (
+    id int auto_increment PRIMARY KEY,
+    name varchar(50) unique,
+    forMonths int, cost int
+);
+CREATE TABLE MemberPayments (
+    id int auto_increment PRIMARY KEY,
+    memberId int not null, onMembership int not null, payedMoney int,
+    paymentAt datetime,
+    foreign key(memberId) references Members(id),
+    foreign key(onMembership) references Memberships(id)
+);

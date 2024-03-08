@@ -4,112 +4,9 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Gym Management System</title>
-        <style>
-
-            .overlay {
-                display: none;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, 0.5);
-                z-index: 1000;
-            }
-            .dialog-box {
-                display: none;
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background-color: #f9f9f9;
-                padding: 20px;
-                border-radius: 10px;
-                box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-                z-index: 1001;
-            }
-
-            .dialog-box h2 {
-                margin-top: 0;
-            }
-            .dialog-box p {
-                color: #666;
-            }
-            .dialog-box button {
-                padding: 8px 16px;
-                margin-top: 10px;
-                background-color: #007bff;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-            }
-            body {
-                font-family: Arial, sans-serif;
-                margin: 0;
-                padding: 0;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-                background-image: url('https://www.kooslooijesteijn.net/generated/assets/blog/2021-12-27/risen-wang-20jX9b35r_M-unsplash-1346-174bcae5e.webp'); /* Gym image URL */
-                background-size: cover;
-                background-position: center;
-            }
-            .login-container {
-                background-color: rgba(255, 255, 255, 0.8);
-                border-radius: 10px;
-                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-                padding: 40px;
-                width: 300px;
-            }
-            .login-container h2 {
-                text-align: center;
-                color: #333;
-                margin-bottom: 30px;
-            }
-            .login-container input[type="text"],
-            .login-container input[type="password"],select {
-                width: calc(100% - 20px);
-                padding: 10px;
-                margin-bottom: 20px;
-                border: 1px solid #ccc;
-                border-radius: 5px;
-
-            }
-
-            .login-container input[type="submit"] {
-                width: 100%;
-                padding: 10px;
-                background-color: #007bff;
-                color: #fff;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                transition: background-color 0.3s;
-            }
-            .login-container input[type="submit"]:hover {
-                background-color: #0056b3;
-            }
-            .login-container .signup-link {
-                text-align: center;
-                margin-top: 20px;
-            }
-            .login-container .signup-link a {
-                color: #007bff;
-                text-decoration: none;
-            }
-            .login-container .signup-link a:hover {
-                text-decoration: underline;
-            }
-            .signup-form {
-                display: none;
-            }
-            .signup-option {
-                text-align: center;
-                margin-top: 20px;
-            }
-        </style>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style/common.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='style/home.css') }}">
+        <script type="text/javascript" src="{{ url_for('static', filename='scripts/common.js') }}"></script>
         <script>
             function makeAsLogIn() {
                 document.getElementById('userType').style.display = 'none';
@@ -122,19 +19,6 @@
                 document.getElementById('userName').style.display = 'block';
                 document.getElementById('userName').required = true;
                 document.getElementById('submit').value = "Create Account";
-            }
-
-            function showDialog() {
-                document.getElementById('overlay').style.display = 'block';
-                document.getElementById('error-dialog').style.display = 'block';
-            }
-
-            function closeDialog() {
-                document.getElementById('overlay').style.display = 'none';
-                document.getElementById('error-dialog').style.display = 'none';
-            }
-            function goToHome()  {
-                window.location.href = "{{ url_for('index') }}";
             }
         </script>
     </head>
@@ -162,17 +46,15 @@
                 </form>
             </div>
         </div>
-        <div id="content">
-            {% if errorTitle %}
-            <div id="overlay" class="overlay" style="display: block;"></div>
-            <div id="error-dialog" class="dialog-box" style="display: block;">
-                <h2>{{ errorTitle }}</h2>
-                {% if errorMessage %}
-                <div>
-                    <b>{{ errorMessage }}</b>
-                </div>
-                {% endif %}
-                <button onclick="goToHome()">Close</button>
+        <div id="alertBox">
+            {% if alertTitle %}
+                <div id="overlay" class="overlay" style="display: block;"></div>
+                <div id="alert-dialog" class="dialog-box" style="display: block;">
+                    <h2>{{ alertTitle }}</h2>
+                    {% if alertMessage %}
+                        <div><b>{{ alertMessage }}</b></div>
+                    {% endif %}
+                    <button onclick="goToPage('{{ url_for('index') }}')">Close</button>
                 </div>
             {% endif %}
         </div>
