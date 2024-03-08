@@ -87,6 +87,10 @@ header h1 {
     margin-bottom: 10px;
     line-height: 1.6;
 }
+.card strong {
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
 
 /* Form Styles */
 form {

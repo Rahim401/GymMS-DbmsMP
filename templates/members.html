@@ -4,58 +4,205 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Member Dashboard</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='style/users.css') }}">
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: Arial, sans-serif;
+                background-image: url('https://www.kooslooijesteijn.net/generated/assets/blog/2021-12-27/risen-wang-20jX9b35r_M-unsplash-1346-174bcae5e.webp'); /* Replace with your gym background image */
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                color: #fff;
+                margin: 0;
+                padding: 0;
+            }
+
+            /* Header Styles */
+            header {
+                background-color: rgba(0.8, 0.8, 0.8, 0.8); /* Adjust transparency here */
+                padding: 20px;
+                text-align: center;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
+
+            header h1 {
+                font-size: 2rem;
+                margin-bottom: 10px;
+            }
+
+            /* Member Widget Styles */
+            .member-widget {
+                position: absolute;
+                top: 30px;
+                right: 30px;
+                display: flex;
+                align-items: center;
+            }
+
+            .member-widget1 {
+                position: absolute;
+                top: 30px;
+                left: 30px;
+                display: flex;
+                align-items: center;
+            }
+
+            .member-name {
+                margin-right: 10px;
+                font-weight: bold;
+            }
+
+            .smButton {
+                background-color: #003366;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                padding: 8px 16px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+            .smButton:hover {
+                background-color: #002050;
+            }
+
+            /* Container Styles */
+            .container {
+                display: flex;
+                padding: 20px;
+            }
+
+            .section {
+                flex: 1;
+                margin-right: 20px;
+            }
+
+            /* Card Styles */
+            .card {
+                background-color: rgba(0, 0, 0, 0.8);
+                padding: 20px;
+                margin-bottom: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .card:hover {
+                background: linear-gradient(155deg, rgba(0,0,0, 0.8) , rgba(0, 123, 255, 1) );
+                opacity: 1;
+                transition: opacity 0.3s ease;
+                transform: translateY(-10px);
+            }
+            .card h2 {
+                font-size: 1.5rem;
+                margin-bottom: 10px;
+            }
+            .card p {
+                margin-bottom: 10px;
+                line-height: 1.6;
+            }
+            .card strong {
+                margin-bottom: 10px;
+                line-height: 1.5;
+            }
+
+            /* Form Styles */
+            form {
+                display: flex;
+                flex-direction: column;
+            }
+
+            label {
+                font-weight: bold;
+                margin-bottom: 5px;
+                text-transform: uppercase;
+            }
+
+            input[type="text"],
+            input[type="date"] {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 10px;
+                border: none;
+                border-radius: 5px;
+                box-sizing: border-box;
+            }
+
+            input[type="submit"] {
+                background-color: #0056b3;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                padding: 10px 20px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+                text-transform: uppercase;
+            }
+
+            input[type="submit"]:hover {
+                background-color: #003366;
+            }
+
+            /* Hover Effects */
+            input[type="submit"]:hover,
+            input[type="submit"]:focus {
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            }
+            select { padding: 5px; border-radius: 5px; }
+
+            .overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 1000;
+            }
+            .dialog-box {
+                display: none;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background-color: #f9f9f9;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+                z-index: 1001;
+            }
+
+            .dialog-box h2 {
+                margin-top: 0;
+            }
+            .dialog-box p {
+                color: #666;
+            }
+            .dialog-box button {
+                padding: 8px 16px;
+                margin-top: 10px;
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            th { padding: 20px; text-align: center; }
+            tr { text-align: center; }
+        </style>
         <script type="text/javascript" src="{{ url_for('static', filename='scripts/common.js') }}"></script>
         <script>
-            document.addEventListener(
-                "DOMContentLoaded",
-                function() {
-                    var today = new Date();
-                    var dd = String(today.getDate()).padStart(2, '0');
-                    var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
-                    var yyyy = today.getFullYear();
-                    var todayString = yyyy + '-' + mm + '-' + dd;
-                    document.getElementById('payment_date').value = todayString;
-
-                    var membership = "{{ memberDetails[4] }}";
-                    // Set amount based on membership
-                    var amountInput = document.getElementById("amount");
-                    switch (membership) {
-                        case "Silver":
-                            amountInput.value = "50"; // Set amount for Basic membership
-                            break;
-                        case "Premium":
-                            amountInput.value = "100"; // Set amount for Premium membership
-                            break;
-                        case "Gold":
-                            amountInput.value = "150"; // Set amount for Gold membership
-                            break;
-                        default:
-                            amountInput.value = ""; // Default value
-                    }
-                }
-            );
-
-            function calculateAmount() {
-                var membershipSelect = document.getElementById("membership");
-                var amountInput = document.getElementById("amount");
-                var selectedMembership = membershipSelect.value;
-                switch (selectedMembership) {
-                    case "Basic":
-                        amountInput.value = "50";
-                        break;
-                    case "Premium":
-                        amountInput.value = "100";
-                        break;
-                    case "Gold":
-                        amountInput.value = "150";
-                        break;
-                    default:
-                        amountInput.value = "";
-                }
+            var membershipList = [ {% for x in membershipsAvailable %}"{{ x[3] }}$", {% endfor %} ];
+            function setMShipPrice(price)  {
+                document.getElementById('membershipPrice').value = price;
             }
-            calculateAmount();
-
             function logout()  {
                 alert("Logging out...");
                 goToPage("{{ url_for('index') }}");
@@ -65,32 +212,38 @@
     <body>
         <header>
             <h1>Member Dashboard</h1>
+            <div class="member-widget1">
+                <button class="smButton">Quit Gym</button>
+            </div>
             <div class="member-widget">
                 <span class="member-name">{{ memberDetails[1] }}</span>
-                <button class="logout-btn" onclick="logout()">Logout</button>
+                <button class="smButton" onclick="logout()">Logout</button>
             </div>
         </header>
         <div class="container">
             <div class="section">
                 <div class="card">
-                    {% if memberDetails %}
                     <h2>Member Details</h2>
                     <ul>
-                        <strong>Name:</strong> {{ memberDetails[0] }}<br>
+                        <strong>Name:</strong> {{ memberDetails[1] }}<br>
                         <strong>Email:</strong> {{ memberDetails[2] }}<br>
-                        <strong>Start Date:</strong> {{ memberDetails[3] }}<br>
+                        <strong>Joined Gym:</strong> {{ memberDetails[5] }}<br>
+                        <strong>Subscription ends at:</strong> {{ memberDetails[6] }}<br>
                     </ul>
-                    {% endif %}
                 </div>
                 <div class="card">
                     <h2>Assigned Trainer</h2>
-                    {% if trainer %}
-                    <p><strong>ID:</strong> {{ trainer.id }}</p>
-                    <p><strong>Name:</strong> {{ trainer.name }}</p>
-                    <p><strong>Email:</strong> {{ trainer.email }}</p>
-                    <p><strong>Phone:</strong> {{ trainer.phone }}</p>
+                    {% if trainerDetails %}
+                        <strong>Name:</strong> {{ trainerDetails[0][1] }}<br>
+                        <strong>Email:</strong> {{ trainerDetails[0][2] }}<br>
+                        <strong>Working From:</strong> {{ trainerDetails[0][4] }}<br>
+                        <strong>Specialities:</strong>
+                        {% for special in trainerDetails[1] %}
+                            {{ special[0] }},
+                        {% endfor %}
+                        <br>
                     {% else %}
-                    <p>No trainer assigned.</p>
+                        <p>No trainer assigned.</p>
                     {% endif %}
                 </div>
             </div>
@@ -98,42 +251,66 @@
             <div class="section">
                 <div class="card">
                     <h2>Payment Section</h2>
-                    <form id="paymentForm" action="{{ url_for('doPaymentPage') }}" method="POST">
+                    <form id="paymentForm" action="{{ url_for('makePayment') }}" method="POST">
                         <div>
-                            <label for="membership">Select Membership Type:</label>
-                            <select id="membership" name="membership" onchange="calculateAmount()">
-                                <option value="Basic">Basic ($50)</option>
-                                <option value="Premium">Premium ($100)</option>
-                                <option value="Gold">Gold ($150)</option>
+                            <label for="membershipType">Select Membership Type:</label>
+                            <select id="membershipType" name="membershipType"
+                                    onchange="setMShipPrice(membershipList[this.selectedIndex]);">
+                            {% for membership in membershipsAvailable %}
+                                <option value="{{ membership[0] }}">
+                                    {{membership[1]}} : {{membership[2]}} month
+                                </option>
+                            {% endfor %}
                             </select>
                             <br><br>
                         </div>
                         <div>
-                            <label for="amount">Amount:</label>
-                            <input type="text" id="amount" name="amount" value="50" readonly>
-                        </div>
-                        <div>
-                            <label for="payment_date">Payment Date:</label>
-                            <input type="date" id="payment_date" name="payment_date" readonly>
+                            <label for="membershipPrice">Amount:</label>
+                            <input id="membershipPrice" name="membershipPrice" type="text" readonly>
                         </div>
                         <br>
                         <div>
-                            <input type="submit" value="Make Payment" class="logout-btn">
+                            <input type="submit" value="Make Payment" class="smButton">
                         </div>
                     </form>
                 </div>
-<!--                <div class="card">-->
-<!--                    <h2>Payment Details</h2>-->
-<!--                    <br>-->
-<!--                    {% for payments in payments_data %}-->
-<!--                    <p><strong>Payment ID:</strong> {{ payments[0] }}</p>-->
-<!--                    <p><strong>Email:</strong> {{ payments[1] }}</p>-->
-<!--                    <p><strong>Amount:</strong> {{ payments[2]}}</p>-->
-<!--                    <p><strong>Payment Date:</strong> {{ payments[3]}}</p>-->
-<!--                    <br>-->
-<!--                    {% endfor %}-->
-<!--                </div>-->
+
+                <div class="card">
+                    <h2>Payment Details</h2>
+                    <table>
+                        <tr>
+                            <th>Payment ID</th>
+                            <th>Time</th>
+                            <th>Membership</th>
+                            <th>Money Payed</th>
+                        </tr>
+
+                        {% for payments in paymentDetails %}
+                        <tr>
+                            <td>{{payments[0]}}</td>
+                            <td>{{payments[3]}}</td>
+                            <td>{{payments[1]}}</td>
+                            <td>{{payments[2]}}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    <br>
+                </div>
+            </div>
+
+            <div id="alertBox">
+                {% if alertTitle %}
+                    <div id="overlay" class="overlay" style="display: block;"></div>
+                    <div id="alert-dialog" class="dialog-box" style="display: block;">
+                        <h2 style="color:black;">{{ alertTitle }}</h2>
+                        {% if alertMessage %}
+                            <div><b style="color:black;">{{ alertMessage }}</b></div>
+                        {% endif %}
+                        <button onclick="goToPage('{{ url_for('memberPage') }}')">Close</button>
+                    </div>
+                {% endif %}
             </div>
         </div>
+        <script> setMShipPrice(membershipList[0]); </script>
     </body>
 </html>

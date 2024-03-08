@@ -1,272 +1,296 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Member Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <style>
-        /* Reset CSS */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Trainer Dashboard</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
 
-        body {
-            font-family: Arial, sans-serif;
-            background-image: url('https://www.kooslooijesteijn.net/generated/assets/blog/2021-12-27/risen-wang-20jX9b35r_M-unsplash-1346-174bcae5e.webp'); /* Replace with your gym background image */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            color: #fff;
-            margin: 0;
-            padding: 0;
-        }
+            body {
+                font-family: Arial, sans-serif;
+                background-image: url('https://www.kooslooijesteijn.net/generated/assets/blog/2021-12-27/risen-wang-20jX9b35r_M-unsplash-1346-174bcae5e.webp'); /* Replace with your gym background image */
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                color: #fff;
+                margin: 0;
+                padding: 0;
+            }
 
-        /* Header Styles */
-        header {
-            background-color: rgba(0.8, 0.8, 0.8, 0.8); /* Adjust transparency here */
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
+            /* Header Styles */
+            header {
+                background-color: rgba(0.8, 0.8, 0.8, 0.8); /* Adjust transparency here */
+                padding: 20px;
+                text-align: center;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
 
-        header h1 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
+            header h1 {
+                font-size: 2rem;
+                margin-bottom: 10px;
+            }
 
-        /* Member Widget Styles */
-        .member-widget {
-            position: absolute;
-            top: 30px;
-            right: 30px;
-            display: flex;
-            align-items: center;
-        }
+            /* Member Widget Styles */
+            .member-widget {
+                position: absolute;
+                top: 30px;
+                right: 30px;
+                display: flex;
+                align-items: center;
+            }
 
-        .member-name {
-            margin-right: 10px;
-            font-weight: bold;
-        }
+            .member-widget1 {
+                position: absolute;
+                top: 30px;
+                left: 30px;
+                display: flex;
+                align-items: center;
+            }
 
-        .logout-btn {
-            background-color: #003366;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            padding: 8px 16px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+            .member-name {
+                margin-right: 10px;
+                font-weight: bold;
+            }
 
-        .logout-btn:hover {
-            background-color: #002050;
-        }
+            .smButton {
+                background-color: #003366;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                padding: 8px 16px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
 
-        /* Container Styles */
-        .container {
-            display: flex;
-            padding: 20px;
-        }
+            .smButton:hover {
+                background-color: #002050;
+            }
 
-        .section {
-            flex: 1;
-            margin-right: 20px;
-        }
+            /* Container Styles */
+            .container {
+                display: flex;
+                padding: 20px;
+            }
 
-        /* Card Styles */
-        .card {
-            background-color: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+            .section {
+                flex: 1;
+                margin-right: 20px;
+            }
 
-        .card h2 {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-        }
+            /* Card Styles */
+            .card {
+                background-color: rgba(0, 0, 0, 0.8);
+                padding: 20px;
+                margin-bottom: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
 
-        .card p {
-            margin-bottom: 10px;
-            line-height: 1.6;
-        }
+            .card:hover {
+                background: linear-gradient(155deg, rgba(0,0,0, 0.8) , rgba(0, 123, 255, 1) );
+                opacity: 1;
+                transition: opacity 0.3s ease;
+                transform: translateY(-10px);
+            }
+            .card h2 {
+                font-size: 1.5rem;
+                margin-bottom: 10px;
+            }
+            .card p {
+                line-height: 1.6;
+            }
+            .card strong {
+                margin-bottom: 10px;
+                line-height: 1.5;
+            }
 
-        /* Form Styles */
-        form {
-            display: flex;
-            flex-direction: column;
-        }
+            /* Form Styles */
+            form {
+                display: flex;
+                flex-direction: column;
+            }
 
-        label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
+            label {
+                font-weight: bold;
+                margin-bottom: 5px;
+                text-transform: uppercase;
+            }
 
-        input[type="text"],
-        input[type="date"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: none;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
+            input[type="text"],
+            input[type="date"] {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 10px;
+                border: none;
+                border-radius: 5px;
+                box-sizing: border-box;
+            }
 
-        input[type="submit"] {
-            background-color: #0056b3;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            padding: 10px 20px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            text-transform: uppercase;
-        }
+            input[type="submit"] {
+                background-color: #0056b3;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                padding: 10px 20px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+                text-transform: uppercase;
+            }
 
-        input[type="submit"]:hover {
-            background-color: #003366;
-        }
+            input[type="submit"]:hover {
+                background-color: #003366;
+            }
 
-        /* Hover Effects */
-        input[type="submit"]:hover,
-        input[type="submit"]:focus {
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        }
-    </style>
-</head>
-<body>
-<header>
-    <h1>Trainer Dashboard</h1>
-    <div class="member-widget">
-        <span class="member-name">{{ trainers_data[0][0] }}</span>
-        <button class="logout-btn" onclick="goToHome()">Logout</button>
-    </div>
-</header>
-<div class="container">
-    <div class="section">
-        <div class="card">
-            <h2>Member Details</h2>
-            <ul>
-                {% for trainer in trainers_data %}
+            /* Hover Effects */
+            input[type="submit"]:hover,
+            input[type="submit"]:focus {
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            }
+            select { padding: 5px; border-radius: 5px; }
 
-                    <strong>Name:</strong> {{ trainer[0] }}<br>
-                    <strong>Email:</strong> {{ trainer[2] }}<br>
-                    <strong>Start Date:</strong> {{ trainer[4] }}<br>
-                    {% endfor %}
-            </ul>
+            .overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 1000;
+            }
+            .dialog-box {
+                display: none;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background-color: #f9f9f9;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+                z-index: 1001;
+            }
 
+            .dialog-box h2 {
+                margin-top: 0;
+            }
+            .dialog-box p {
+                color: #666;
+            }
+            .dialog-box button {
+                padding: 8px 16px;
+                margin-top: 10px;
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            th { padding: 20px; text-align: center; }
+            tr { text-align: center; }
+        </style>
+        <script type="text/javascript" src="{{ url_for('static', filename='scripts/common.js') }}"></script>
+        <script>
+            var speciality2AddList = [{% for x in specialityToAdd %} [{{x[0]}}, '{{x[1]}}', '{{x[2]}}'], {% endfor %} ];
+            function setSpecialityDescription(description)  {
+                document.getElementById('specialityDescription').innerHTML = description;
+            }
+            function logout()  {
+                alert("Logging out...");
+                goToPage("{{ url_for('index') }}");
+            }
+        </script>
+    </head>
+    <body>
+        <header>
+            <h1>Trainer Dashboard</h1>
+            <div class="member-widget1">
+                <button class="smButton">Resign</button>
+            </div>
+            <div class="member-widget">
+                <span class="member-name">{{ trainerDetails[1] }}</span>
+                <button class="smButton" onclick="logout()">Logout</button>
+            </div>
+        </header>
+        <div class="container">
+            <div class="section">
+                <div class="card">
+                    <h2>Trainer Details</h2>
+                    <ul>
+                        <strong>Name:</strong> {{ trainerDetails[1] }}<br>
+                        <strong>Email:</strong> {{ trainerDetails[2] }}<br>
+                        <strong>Working From:</strong> {{ trainerDetails[4] }}<br>
+                        <strong>Specialities:</strong>
+                        {% for special in specialityDetails %}
+                            {{ special[0] }},
+                        {% endfor %}
+                        <br>
+                    </ul>
+                </div>
+                {% if specialityToAdd %}
+                <div class="card">
+                    <h2>Add Speciality</h2>
+                    <form id="specialityForm" action="{{ url_for('addSpeciality') }}" method="POST">
+                        <div>
+                            <label for="specialityType">Select Speciality:</label>
+                            <select id="specialityType" name="specialityType"
+                                    onchange="setSpecialityDescription(speciality2AddList[this.selectedIndex][2]);">
+                                {% for speciality in specialityToAdd %}
+                                    <option value="{{ speciality[0] }}">
+                                        {{speciality[1]}}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div style="margin-bottom:10px;">
+                            <strong>Description: </strong>
+                            <txt id="specialityDescription">dsa</txt>
+                        </div>
+                        <div>
+                            <input type="submit" value="Add Speciality" class="smButton">
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="section">
+                <div class="card">
+                    <h2>Members under training</h2>
+                    {% if memberDetails %}
+                        {% for member in memberDetails %}
+                            <p>Training
+                                <strong>{{member[1]}} </strong> with contact email:
+                                <strong>{{member[2]}} </strong>
+<!--                                <strong style="margin-left:30px;">Email: </strong> -->
+                            </p>
+                        {% endfor %}
+                    {% else %}
+                        <p>Training No body</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div id="alertBox">
+                {% if alertTitle %}
+                    <div id="overlay" class="overlay" style="display: block;"></div>
+                    <div id="alert-dialog" class="dialog-box" style="display: block;">
+                        <h2 style="color:black;">{{ alertTitle }}</h2>
+                        {% if alertMessage %}
+                            <div><b style="color:black;">{{ alertMessage }}</b></div>
+                        {% endif %}
+                        <button onclick="goToPage('{{ url_for('trainerPage') }}')">Close</button>
+                    </div>
+                {% endif %}
+            </div>
+            <script> setSpecialityDescription(speciality2AddList[0][2]); </script>
         </div>
-
-        <div class="card">
-            <h2>Member Trainer</h2>
-            {% if member %}
-            <p><strong>ID:</strong> {{ member.id }}</p>
-            <p><strong>Name:</strong> {{ member.name }}</p>
-            <p><strong>Email:</strong> {{ member.email }}</p>
-            <p><strong>Phone:</strong> {{ member.phone }}</p>
-            {% else %}
-            <p>No Member assigned.</p>
-            {% endif %}
-        </div>
-    </div>
-
-    <div class="section">
-        <div class="card">
-        </div>
-
-        <div class="card">
-        </div>
-    </div>
-</div>
-<script>
-    function makeAsLogIn() {
-        document.getElementById('typeDiv').style.display = 'none';
-        document.getElementById('nameDiv').style.display = 'none';
-        document.getElementById('userName').required = false;
-    }
-    function makeAsCreate() {
-        document.getElementById('typeDiv').style.display = 'block';
-        document.getElementById('nameDiv').style.display = 'block';
-        document.getElementById('userName').required = true;
-    }
-
-
-    function showDialog() {
-        document.getElementById('overlay').style.display = 'block';
-        document.getElementById('error-dialog').style.display = 'block';
-    }
-
-    function closeDialog() {
-        document.getElementById('overlay').style.display = 'none';
-        document.getElementById('error-dialog').style.display = 'none';
-    }
-    function goToHome()  {
-        window.location.href = "{{ url_for('index') }}";
-    }
-
-document.addEventListener("DOMContentLoaded", function() {
-    var today = new Date();
-    var dd = String(today.getDate()).padStart(2, '0');
-    var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
-    var yyyy = today.getFullYear();
-    var todayString = yyyy + '-' + mm + '-' + dd;
-    document.getElementById('payment_date').value = todayString;
-
-    var membership = "{{ members_data[0][4]}}";
-
-    // Set amount based on membership
-    var amountInput = document.getElementById("amount");
-    switch (membership) {
-        case "Silver":
-            amountInput.value = "50"; // Set amount for Basic membership
-            break;
-        case "Premium":
-            amountInput.value = "100"; // Set amount for Premium membership
-            break;
-        case "Gold":
-            amountInput.value = "150"; // Set amount for Gold membership
-            break;
-        default:
-            amountInput.value = ""; // Default value
-    }
-});
-
- function calculateAmount() {
-    var membershipSelect = document.getElementById("membership");
-    var amountInput = document.getElementById("amount");
-    var selectedMembership = membershipSelect.value;
-    switch (selectedMembership) {
-        case "Basic":
-            amountInput.value = "50";
-            break;
-        case "Premium":
-            amountInput.value = "100";
-            break;
-        case "Gold":
-            amountInput.value = "150";
-            break;
-        default:
-            amountInput.value = "";
-    }
-}
-calculateAmount();
-
-function goToHome()  {
-alert("Logging out...");
-        window.location.href = "{{ url_for('index') }}";
-    }
-function logout() {
-// Perform logout functionality here
-alert("Logging out...");
-}
-
-
-</script>
-</body>
+    </body>
 </html>

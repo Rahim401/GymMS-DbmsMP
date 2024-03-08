@@ -1,11 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin details</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style/main.css') }}">
-    <style>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Member Dashboard</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: Arial, sans-serif;
+                background-image: url('https://www.kooslooijesteijn.net/generated/assets/blog/2021-12-27/risen-wang-20jX9b35r_M-unsplash-1346-174bcae5e.webp'); /* Replace with your gym background image */
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                color: #fff;
+                margin: 0;
+                padding: 0;
+            }
+
+            /* Header Styles */
+            header {
+                background-color: rgba(0.8, 0.8, 0.8, 0.8); /* Adjust transparency here */
+                padding: 20px;
+                text-align: center;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
+
+            header h1 {
+                font-size: 2rem;
+                margin-bottom: 10px;
+            }
+
+            /* Member Widget Styles */
+            .member-widget {
+                position: absolute;
+                top: 30px;
+                right: 30px;
+                display: flex;
+                align-items: center;
+            }
+
+            .member-widget1 {
+                position: absolute;
+                top: 30px;
+                left: 30px;
+                display: flex;
+                align-items: center;
+            }
+
+            .member-name {
+                margin-right: 10px;
+                font-weight: bold;
+            }
+
+            .smButton {
+                background-color: #003366;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                padding: 8px 16px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+            .smButton:hover {
+                background-color: #002050;
+            }
+
+            /* Container Styles */
+            .container {
+                display: flex;
+                padding: 20px;
+            }
+
+            .section {
+                flex: 1;
+                margin-right: 20px;
+            }
+
+            /* Card Styles */
+            .card {
+                background-color: rgba(0, 0, 0, 0.8);
+                padding: 20px;
+                margin-bottom: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .card:hover {
+                background: linear-gradient(155deg, rgba(0,0,0, 0.8) , rgba(0, 123, 255, 1) );
+                opacity: 1;
+                transition: opacity 0.3s ease;
+                transform: translateY(-10px);
+            }
+            .card h2 {
+                font-size: 1.5rem;
+                margin-bottom: 10px;
+            }
+            .card p {
+                margin-bottom: 10px;
+                line-height: 1.6;
+            }
+            .card strong {
+                margin-bottom: 10px;
+                line-height: 1.5;
+            }
+
+            /* Form Styles */
+            form {
+                display: flex;
+                flex-direction: column;
+            }
+
+            label {
+                font-weight: bold;
+                margin-bottom: 5px;
+                text-transform: uppercase;
+            }
+
+            input[type="text"],
+            input[type="date"] {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 10px;
+                border: none;
+                border-radius: 5px;
+                box-sizing: border-box;
+            }
+
+            input[type="submit"] {
+                background-color: #0056b3;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                padding: 10px 20px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+                text-transform: uppercase;
+            }
+
+            input[type="submit"]:hover {
+                background-color: #003366;
+            }
+
+            /* Hover Effects */
+            input[type="submit"]:hover,
+            input[type="submit"]:focus {
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            }
+            select { padding: 5px; border-radius: 5px; }
+
             .overlay {
                 display: none;
                 position: fixed;
@@ -16,7 +165,6 @@
                 background-color: rgba(0, 0, 0, 0.5);
                 z-index: 1000;
             }
-
             .dialog-box {
                 display: none;
                 position: fixed;
@@ -46,38 +194,123 @@
                 cursor: pointer;
             }
 
-    </style>
-    <script>
-            function makeAsLogIn() {
-                document.getElementById('typeDiv').style.display = 'none';
-                document.getElementById('nameDiv').style.display = 'none';
-                document.getElementById('userName').required = false;
+            th { padding: 20px; text-align: center; }
+            tr { text-align: center; }
+        </style>
+        <script type="text/javascript" src="{{ url_for('static', filename='scripts/common.js') }}"></script>
+        <script>
+            var membershipList = [ {% for x in membershipsAvailable %}"{{ x[3] }}$", {% endfor %} ];
+            function setMShipPrice(price)  {
+                document.getElementById('membershipPrice').value = price;
             }
-            function makeAsCreate() {
-                document.getElementById('typeDiv').style.display = 'block';
-                document.getElementById('nameDiv').style.display = 'block';
-                document.getElementById('userName').required = true;
+            function logout()  {
+                alert("Logging out...");
+                goToPage("{{ url_for('index') }}");
             }
+        </script>
+    </head>
+    <body>
+        <header>
+            <h1>Member Dashboard</h1>
+            <div class="member-widget1">
+                <button class="smButton">Quit Gym</button>
+            </div>
+            <div class="member-widget">
+                <span class="member-name">{{ memberDetails[1] }}</span>
+                <button class="smButton" onclick="logout()">Logout</button>
+            </div>
+        </header>
+        <div class="container">
+            <div class="section">
+                <div class="card">
+                    <h2>Member Details</h2>
+                    <ul>
+                        <strong>Name:</strong> {{ memberDetails[1] }}<br>
+                        <strong>Email:</strong> {{ memberDetails[2] }}<br>
+                        <strong>Joined Gym:</strong> {{ memberDetails[5] }}<br>
+                        <strong>Subscription ends at:</strong> {{ memberDetails[6] }}<br>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h2>Assigned Trainer</h2>
+                    {% if trainerDetails %}
+                        <strong>Name:</strong> {{ trainerDetails[0][1] }}<br>
+                        <strong>Email:</strong> {{ trainerDetails[0][2] }}<br>
+                        <strong>Working From:</strong> {{ trainerDetails[0][4] }}<br>
+                        <strong>Specialities:</strong>
+                        {% for special in trainerDetails[1] %}
+                            {{ special[0] }},
+                        {% endfor %}
+                        <br>
+                    {% else %}
+                        <p>No trainer assigned.</p>
+                    {% endif %}
+                </div>
+            </div>
 
+            <div class="section">
+                <div class="card">
+                    <h2>Payment Section</h2>
+                    <form id="paymentForm" action="{{ url_for('makePayment') }}" method="POST">
+                        <div>
+                            <label for="membershipType">Select Membership Type:</label>
+                            <select id="membershipType" name="membershipType"
+                                    onchange="setMShipPrice(membershipList[this.selectedIndex]);">
+                            {% for membership in membershipsAvailable %}
+                                <option value="{{ membership[0] }}">
+                                    {{membership[1]}} : {{membership[2]}} month
+                                </option>
+                            {% endfor %}
+                            </select>
+                            <br><br>
+                        </div>
+                        <div>
+                            <label for="membershipPrice">Amount:</label>
+                            <input id="membershipPrice" name="membershipPrice" type="text" readonly>
+                        </div>
+                        <br>
+                        <div>
+                            <input type="submit" value="Make Payment" class="smButton">
+                        </div>
+                    </form>
+                </div>
 
-            function showDialog() {
-                document.getElementById('overlay').style.display = 'block';
-                document.getElementById('error-dialog').style.display = 'block';
-            }
+                <div class="card">
+                    <h2>Payment Details</h2>
+                    <table>
+                        <tr>
+                            <th>Payment ID</th>
+                            <th>Time</th>
+                            <th>Membership</th>
+                            <th>Money Payed</th>
+                        </tr>
 
-            function closeDialog() {
-                document.getElementById('overlay').style.display = 'none';
-                document.getElementById('error-dialog').style.display = 'none';
-            }
-            function goToHome()  {
-                window.location.href = "{{ url_for('index') }}";
-            }
+                        {% for payments in paymentDetails %}
+                        <tr>
+                            <td>{{payments[0]}}</td>
+                            <td>{{payments[3]}}</td>
+                            <td>{{payments[1]}}</td>
+                            <td>{{payments[2]}}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    <br>
+                </div>
+            </div>
 
-    </script>
-</head>
-<body>
-<div class="container">
-    <h2>Ommbu da Admin</h2>
-</div>
-</body>
+            <div id="alertBox">
+                {% if alertTitle %}
+                    <div id="overlay" class="overlay" style="display: block;"></div>
+                    <div id="alert-dialog" class="dialog-box" style="display: block;">
+                        <h2 style="color:black;">{{ alertTitle }}</h2>
+                        {% if alertMessage %}
+                            <div><b style="color:black;">{{ alertMessage }}</b></div>
+                        {% endif %}
+                        <button onclick="goToPage('{{ url_for('memberPage') }}')">Close</button>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <script> setMShipPrice(membershipList[0]); </script>
+    </body>
 </html>

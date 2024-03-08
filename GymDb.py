@@ -1,5 +1,5 @@
 import random
-from datetime import date
+from datetime import date, datetime
 from sqlalchemy import Connection, text
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -66,6 +66,13 @@ class GymDb:
         statement = f"INSERT INTO Trainers (name, email, password, startDate) VALUES " \
                     f"('{name}', '{email}', '{password}', '{startDate}');"
         self.executeStatement(statement, commit=True, howToHandle=howToHandle)
+    def insertPayment(self, memberId, membershipType, money=200, atTime=datetime.now(), howToHandle="print"):
+        statement = f"insert into MemberPayments(memberId, onMembership, payedMoney, paymentAt) " \
+                    f"values({memberId}, {membershipType}, {money}, '{atTime}');"
+        self.executeStatement(statement, commit=True, howToHandle=howToHandle)
+    def insertSpeciality(self, trainerId, specialityId, howToHandle="print"):
+        statement = f"insert into TrainerSpecialities values({trainerId}, {specialityId});"
+        self.executeStatement(statement, commit=True, howToHandle=howToHandle)
 
     def getUserBy(self, userId=None, email=None, userType="Admins"):
         if userId is not None: return self.doQuery(
@@ -81,31 +88,48 @@ class GymDb:
     def getTrainerBy(self, trainerId=None, email=None): return self.getUserBy(trainerId, email, "Trainers")
     def getMemberBy(self, memberId=None, email=None): return self.getUserBy(memberId, email, "Members")
     def getMembershipList(self): return self.doQuery(f"select * from Memberships;")
+    def getSpecialityList(self): return self.doQuery(f"select * from Specialities;")
+    def getSpecialityNotAdded(self, trainerId):
+        query = f"select sp.id,sp.name,sp.description from Specialities sp " \
+                f"where sp.id not in " \
+                f"(select specialityId from TrainerSpecialities where trainerId={trainerId});"
+        return self.doQuery(query)
+    def getSpecialityOfTrainer(self, trainerId):
+        query = f"select sp.id, sp.name from TrainerSpecialities ts, Specialities sp where ts.trainerId={trainerId} and ts.specialityId=sp.id;"
+        return self.doQuery(query)
 
     def getTrainerExBy(self, trainerId=None, email=None):
         trainer = self.getTrainerBy(trainerId, email)
         if trainer is not None:
             specialities = self.doQuery(
-                f"Select sp.name from Specialities sp, TrainerSpecialities ts "
+                f"Select sp.name, sp.description from Specialities sp, TrainerSpecialities ts "
                 f"where ts.trainerId={trainer[0]} and ts.specialityId = sp.id;"
             )
             members = self.doQuery( f"Select mb.id, mb.name,mb.email from members mb where mb.trainedBy={trainer[0]};")
-            return *trainer, specialities, members
+            return trainer, specialities, members
         return None
     def getMemberExBy(self, memberId=None, email=None):
         member = self.getMemberBy(memberId, email)
         if member is not None:
             if member[4] is None: trainer = None
-            else: trainer = self.doQuery(
-                f"Select tr.id, tr.name,tr.email from trainers tr where tr.id={member[4]};",
-                getFirst=True
-            )
+            else: trainer = self.getTrainerExBy(trainerId=member[4])
             paymentList = self.doQuery(
                 f"Select pys.id, ms.name, pys.payedMoney, pys.paymentAt from Memberships ms, MemberPayments pys "
-                f"where pys.memberId={memberId} and pys.onMembership = ms.id;"
+                f"where pys.memberId={member[0]} and pys.onMembership = ms.id;"
             )
             return member, trainer, paymentList
         return None, None, None
+
+    def getAllData(self):
+        allMembers = self.doQuery(f"Select * From Members;")
+        allTrainers = self.doQuery(f"Select * From Trainers;")
+        allSpecialities = [self.getSpecialityOfTrainer(trainers[0]) for trainers in allTrainers]
+        allPayments = self.doQuery(
+            f"Select mp.id,m.name,mp.payedMoney,mp.paymentAt "
+            f"From MemberPayments mp, Members m where mp.memberId=m.id;"
+        )
+        return allMembers, [(*x,y) for x,y in zip(allTrainers, allSpecialities)], allPayments
+
 
     def getUserIfExists(self, email, password, howToHandle="print"):
         for userType in ("Admins", "Members", "Trainers"):
