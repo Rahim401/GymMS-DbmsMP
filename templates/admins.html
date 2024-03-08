@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Admin details</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='style/main.css') }}">
-        <style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/main.css') }}">
+    <style>
             .overlay {
                 display: none;
                 position: fixed;
@@ -45,8 +45,9 @@
                 border-radius: 5px;
                 cursor: pointer;
             }
-        </style>
-        <script>
+
+    </style>
+    <script>
             function makeAsLogIn() {
                 document.getElementById('typeDiv').style.display = 'none';
                 document.getElementById('nameDiv').style.display = 'none';
@@ -71,11 +72,12 @@
             function goToHome()  {
                 window.location.href = "{{ url_for('index') }}";
             }
-        </script>
-    </head>
-    <body>
-        <div class="container">
-            <h2>Ommbu da Admin</h2>
-        </div>
-    </body>
+
+    </script>
+</head>
+<body>
+<div class="container">
+    <h2>Ommbu da Admin</h2>
+</div>
+</body>
 </html>

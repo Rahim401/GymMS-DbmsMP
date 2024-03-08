@@ -1,8 +1,8 @@
 from datetime import date
-import mysql.connector
 from flask import Flask, render_template, request, redirect, url_for, session
 from sqlalchemy import create_engine, text
 from GymDb import GymDb
+from sqlalchemy.exc import IntegrityError
 
 USER = "root"
 PASSWORD = "fuckPass"
@@ -31,32 +31,40 @@ def memberPage():
 @app.route('/addUser', methods=['POST'])
 def addUser():
     if request.method != 'POST': return
-    actionType = request.form["type"]
-    userType = request.form["userType"]
-    userName = request.form['userName']
-    userEmail = request.form['userEmail']
-    userPassword = request.form['userPassword']
+    try:
+        actionType = request.form["actionType"]
+        userType = request.form["userType"]
+        userName = request.form['userName']
+        userEmail = request.form['userEmail']
+        userPassword = request.form['userPassword']
 
-    if actionType == "Create":
-        if userType == "Member": db.insertMember(userName, userEmail, userPassword, date.today())
-        else: db.insertTrainers(userName, userEmail, userPassword, date.today())
-    elif actionType == "Login":
-        for userType in ("Admins", "Members", "Trainers"):
-            query = f"Select * From {userType} Where email='{userEmail}' and password='{userPassword}';"
-            result = db.executeStatement(query)
-            if result is not None:
-                userData = result.all()
-                if len(userData) > 0: break
-        else:
-            return render_template(
+        if actionType == "Create":
+            if userType == "Member": db.insertMember(userName, userEmail, userPassword, date.today(), howToHandle="rethrow")
+            else: db.insertTrainers(userName, userEmail, userPassword, date.today())
+        elif actionType == "Login":
+            userType, userData = db.getUserIfExists(userEmail, userPassword, howToHandle="rethrow")
+            if userType is not None:
+                if userType == "Admins": return redirect(url_for('adminPage'))
+                elif userType == "Trainers": return redirect(url_for('trainerPage'))
+                elif userType == "Members": return redirect(url_for('memberPage'))
+            else: return render_template(
                 'homePage.html',
                 errorTitle="Can't find User",
                 errorMessage = rf"Invalid User({userEmail}) is database! Create the user."
             )
-        if userType == "Admins": return redirect(url_for('adminPage'))
-        elif userType == "Trainers": return redirect(url_for('trainerPage'))
-        elif userType == "Members": return redirect(url_for('memberPage'))
-    return redirect(url_for('index'))
+        return redirect(url_for('index'))
+    except IntegrityError:
+        return render_template(
+            'homePage.html',
+            errorTitle="Duplicate user",
+            errorMessage=rf"User with email id already exists!"
+        )
+    except Exception:
+        return render_template(
+            'homePage.html',
+            errorTitle="Error occurred",
+            errorMessage=rf"Some unknown error occurred while processing data!"
+        )
 
 if __name__ == '__main__':
     app.run(debug=True)

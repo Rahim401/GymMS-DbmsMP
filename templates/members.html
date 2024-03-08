@@ -3,47 +3,140 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Member details</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='style/main.css') }}">
+        <title>Member Dashboard</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
         <style>
-            .overlay {
-                display: none;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, 0.5);
-                z-index: 1000;
+            /* Reset CSS */
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
             }
 
-            .dialog-box {
-                display: none;
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background-color: #f9f9f9;
+            body {
+                font-family: Arial, sans-serif;
+                background-image: url('https://www.kooslooijesteijn.net/generated/assets/blog/2021-12-27/risen-wang-20jX9b35r_M-unsplash-1346-174bcae5e.webp'); /* Replace with your gym background image */
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                color: #fff;
+                margin: 0;
+                padding: 0;
+            }
+
+            /* Header Styles */
+            header {
+                background-color: rgba(0.8, 0.8, 0.8, 0.8); /* Adjust transparency here */
                 padding: 20px;
-                border-radius: 10px;
-                box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-                z-index: 1001;
+                text-align: center;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             }
 
-            .dialog-box h2 {
-                margin-top: 0;
+            header h1 {
+                font-size: 2rem;
+                margin-bottom: 10px;
             }
-            .dialog-box p {
-                color: #666;
+
+            /* Member Widget Styles */
+            .member-widget {
+                position: absolute;
+                top: 30px;
+                right: 30px;
+                display: flex;
+                align-items: center;
             }
-            .dialog-box button {
-                padding: 8px 16px;
-                margin-top: 10px;
-                background-color: #007bff;
-                color: white;
+
+            .member-name {
+                margin-right: 10px;
+                font-weight: bold;
+            }
+
+            .logout-btn {
+                background-color: #003366;
+                color: #fff;
                 border: none;
                 border-radius: 5px;
+                padding: 8px 16px;
                 cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+            .logout-btn:hover {
+                background-color: #002050;
+            }
+
+            /* Container Styles */
+            .container {
+                display: flex;
+                padding: 20px;
+            }
+
+            .section {
+                flex: 1;
+                margin-right: 20px;
+            }
+
+            /* Card Styles */
+            .card {
+                background-color: rgba(0, 0, 0, 0.8);
+                padding: 20px;
+                margin-bottom: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .card h2 {
+                font-size: 1.5rem;
+                margin-bottom: 20px;
+            }
+
+            .card p {
+                margin-bottom: 10px;
+                line-height: 1.6;
+            }
+
+            /* Form Styles */
+            form {
+                display: flex;
+                flex-direction: column;
+            }
+
+            label {
+                font-weight: bold;
+                margin-bottom: 5px;
+                text-transform: uppercase;
+            }
+
+            input[type="text"],
+            input[type="date"] {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 10px;
+                border: none;
+                border-radius: 5px;
+                box-sizing: border-box;
+            }
+
+            input[type="submit"] {
+                background-color: #0056b3;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                padding: 10px 20px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+                text-transform: uppercase;
+            }
+
+            input[type="submit"]:hover {
+                background-color: #003366;
+            }
+
+            /* Hover Effects */
+            input[type="submit"]:hover,
+            input[type="submit"]:focus {
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             }
         </style>
         <script>
@@ -71,11 +164,136 @@
             function goToHome()  {
                 window.location.href = "{{ url_for('index') }}";
             }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+            var yyyy = today.getFullYear();
+            var todayString = yyyy + '-' + mm + '-' + dd;
+            document.getElementById('payment_date').value = todayString;
+
+            var membership = "{{ members_data[0][4]}}";
+
+            // Set amount based on membership
+            var amountInput = document.getElementById("amount");
+            switch (membership) {
+                case "Silver":
+                    amountInput.value = "50"; // Set amount for Basic membership
+                    break;
+                case "Premium":
+                    amountInput.value = "100"; // Set amount for Premium membership
+                    break;
+                case "Gold":
+                    amountInput.value = "150"; // Set amount for Gold membership
+                    break;
+                default:
+                    amountInput.value = ""; // Default value
+            }
+        });
+
+         function calculateAmount() {
+            var membershipSelect = document.getElementById("membership");
+            var amountInput = document.getElementById("amount");
+            var selectedMembership = membershipSelect.value;
+            switch (selectedMembership) {
+                case "Basic":
+                    amountInput.value = "50";
+                    break;
+                case "Premium":
+                    amountInput.value = "100";
+                    break;
+                case "Gold":
+                    amountInput.value = "150";
+                    break;
+                default:
+                    amountInput.value = "";
+            }
+        }
+        calculateAmount();
+
+        function goToHome()  {
+            alert("Logging out...");
+            window.location.href = "{{ url_for('index') }}";
+        }
+        function logout() { alert("Logging out..."); }
         </script>
     </head>
     <body>
+        <header>
+            <h1>Member Dashboard</h1>
+            <div class="member-widget">
+                <span class="member-name">{{ members_data[0][0] }}</span>
+                <button class="logout-btn" onclick="goToHome()">Logout</button>
+            </div>
+        </header>
         <div class="container">
-            <h2>Ommbu da Member</h2>
+            <div class="section">
+                <div class="card">
+                    <h2>Member Details</h2>
+                    <ul>
+                        {% for member in members_data %}
+                            <strong>Name:</strong> {{ member[0] }}<br>
+                            <strong>Email:</strong> {{ member[2] }}<br>
+                            <strong>Start Date:</strong> {{ member[3] }}<br>
+                            {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h2>Assigned Trainer</h2>
+                    {% if trainer %}
+                    <p><strong>ID:</strong> {{ trainer.id }}</p>
+                    <p><strong>Name:</strong> {{ trainer.name }}</p>
+                    <p><strong>Email:</strong> {{ trainer.email }}</p>
+                    <p><strong>Phone:</strong> {{ trainer.phone }}</p>
+                    {% else %}
+                    <p>No trainer assigned.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="section">
+
+                <div class="card">
+                    <h2>Payment Section</h2>
+                    <form id="paymentForm" action="{{ url_for('insert_payment') }}" method="POST">
+                        <div>
+                            <label for="membership">Select Membership Type:</label>
+                            <select id="membership" name="membership" onchange="calculateAmount()">
+                                <option value="Basic">Basic ($50)</option>
+                                <option value="Premium">Premium ($100)</option>
+                                <option value="Gold">Gold ($150)</option>
+                            </select>
+                            <br><br>
+                        </div>
+                        <div>
+                            <label for="amount">Amount:</label>
+                            <input type="text" id="amount" name="amount" value="50" readonly>
+                        </div>
+                        <div>
+                            <label for="payment_date">Payment Date:</label>
+                            <input type="date" id="payment_date" name="payment_date" readonly>
+                        </div>
+                        <br>
+                        <div>
+                            <input type="submit" value="Make Payment" class="logout-btn">
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h2>Payment Details</h2>
+                    <br>
+                    {% for payments in payments_data %}
+                    <p><strong>Payment ID:</strong> {{ payments[0] }}</p>
+                    <p><strong>Email:</strong> {{ payments[1] }}</p>
+                    <p><strong>Amount:</strong> {{ payments[2]}}</p>
+                    <p><strong>Payment Date:</strong> {{ payments[3]}}</p>
+                    <br>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     </body>
 </html>

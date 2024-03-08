@@ -4,8 +4,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Gym Management System</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='style/main.css') }}">
         <style>
+
             .overlay {
                 display: none;
                 position: fixed;
@@ -16,7 +16,6 @@
                 background-color: rgba(0, 0, 0, 0.5);
                 z-index: 1000;
             }
-
             .dialog-box {
                 display: none;
                 position: fixed;
@@ -45,19 +44,85 @@
                 border-radius: 5px;
                 cursor: pointer;
             }
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                background-image: url('https://www.kooslooijesteijn.net/generated/assets/blog/2021-12-27/risen-wang-20jX9b35r_M-unsplash-1346-174bcae5e.webp'); /* Gym image URL */
+                background-size: cover;
+                background-position: center;
+            }
+            .login-container {
+                background-color: rgba(255, 255, 255, 0.8);
+                border-radius: 10px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+                padding: 40px;
+                width: 300px;
+            }
+            .login-container h2 {
+                text-align: center;
+                color: #333;
+                margin-bottom: 30px;
+            }
+            .login-container input[type="text"],
+            .login-container input[type="password"],select {
+                width: calc(100% - 20px);
+                padding: 10px;
+                margin-bottom: 20px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+
+            }
+
+            .login-container input[type="submit"] {
+                width: 100%;
+                padding: 10px;
+                background-color: #007bff;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+            .login-container input[type="submit"]:hover {
+                background-color: #0056b3;
+            }
+            .login-container .signup-link {
+                text-align: center;
+                margin-top: 20px;
+            }
+            .login-container .signup-link a {
+                color: #007bff;
+                text-decoration: none;
+            }
+            .login-container .signup-link a:hover {
+                text-decoration: underline;
+            }
+            .signup-form {
+                display: none;
+            }
+            .signup-option {
+                text-align: center;
+                margin-top: 20px;
+            }
         </style>
         <script>
             function makeAsLogIn() {
-                document.getElementById('typeDiv').style.display = 'none';
-                document.getElementById('nameDiv').style.display = 'none';
+                document.getElementById('userType').style.display = 'none';
+                document.getElementById('userName').style.display = 'none';
                 document.getElementById('userName').required = false;
+                document.getElementById('submit').value = "Login";
             }
             function makeAsCreate() {
-                document.getElementById('typeDiv').style.display = 'block';
-                document.getElementById('nameDiv').style.display = 'block';
+                document.getElementById('userType').style.display = 'block';
+                document.getElementById('userName').style.display = 'block';
                 document.getElementById('userName').required = true;
+                document.getElementById('submit').value = "Create Account";
             }
-
 
             function showDialog() {
                 document.getElementById('overlay').style.display = 'block';
@@ -74,57 +139,43 @@
         </script>
     </head>
     <body>
-        <div class="container">
-            <h1>Gym Management System</h1>
+        <div class="login-container">
+            <h2>Gym Management System</h2>
             <div class="add-form">
                 <form action="{{ url_for('addUser') }}" method="POST">
-                    <div style="margin-bottom: 20px; text-align: center;">
-                        <label for="actTypRad-login">Login </label>
-                        <input type="radio" name="type" value="Login" id="actTypRad-login" onclick="makeAsLogIn()" checked>
+                    <div id="actionType" style="margin-bottom: 20px; text-align: center;">
+                        <label for="actionType-login">Login </label>
+                        <input type="radio" name="actionType" value="Login" id="actionType-login" onclick="makeAsLogIn()" checked>
 
-                        <label for="actTypRad-create" style="margin-left: 40px;">Create </label>
-                        <input type="radio" name="type" value="Create" id="actTypRad-create" onclick="makeAsCreate()">
+                        <label for="actionType-create" style="margin-left: 40px;">Create </label>
+                        <input type="radio" name="actionType" value="Create" id="actionType-create" onclick="makeAsCreate()">
                     </div>
 
-                    <div id="typeDiv" style="display: none;">
-                        <label style="margin-bottom: 5px;">User Type:</label>
-                        <p style="margin-top: 5px;">
-                            <label for="usrTypRad-member">Member</label>
-                            <input type="radio" id="usrTypRad-member" name="userType" value="Member" checked>
-                            <label for="usrTypRad-trainer" style="margin-left:30px;">Trainer</label>
-                            <input type="radio" id="usrTypRad-trainer" name="userType" value="Trainer">
-                        </p>
-                    </div>
-                    <div id="nameDiv" style="display: none; margin-top:22px;">
-                        <label for="userName" style="margin-bottom: 5px;">Name:</label>
-                        <input type="text" id="userName" name="userName"><br>
-                    </div>
-                    <div id="emailDiv">
-                        <label for="userEmail" style="margin-bottom: 5px;">Email:</label>
-                        <input type="text" id="userEmail" name="userEmail" required><br>
-                    </div>
-                    <div id="passwordDiv">
-                        <label for="userPassword" style="margin-bottom: 5px;">Password:</label>
-                        <input type="text" id="userPassword" name="userPassword" required><br>
-                    </div>
-                    <input type="submit" value="Submit" style="background-color: #007bff; color: #fff; border: none; cursor: pointer; padding: 10px; border-radius: 5px; transition: background-color 0.3s ease;">
+                    <select id="userType" name="userType" style="width: calc(100%);">
+                        <option value="Member">Member</option>
+                        <option value="Trainer">Trainer</option>
+                    </select>
+                    <input type="text" id="userName" name="userName" placeholder="Name">
+                    <input type="text" id="userEmail" name="userEmail" placeholder="Email" required>
+                    <input type="password" id="userPassword" name="userPassword" placeholder="Password" required>
+                    <input type="submit" id = "submit" value="Submit" style="background-color: #007bff; color: #fff; border: none; cursor: pointer; padding: 10px; border-radius: 5px; transition: background-color 0.3s ease;">
                 </form>
             </div>
-
-            <div id="content">
-                {% if errorTitle %}
-                    <div id="overlay" class="overlay" style="display: block;"></div>
-                    <div id="error-dialog" class="dialog-box" style="display: block;">
-                        <h2>{{ errorTitle }}</h2>
-                        {% if errorMessage %}
-                        <div>
-                            <b>{{ errorMessage }}</b>
-                        </div>
-                        {% endif %}
-                        <button onclick="goToHome()">Close</button>
-                    </div>
-                {% endif %}
-            </div>
         </div>
+        <div id="content">
+            {% if errorTitle %}
+            <div id="overlay" class="overlay" style="display: block;"></div>
+            <div id="error-dialog" class="dialog-box" style="display: block;">
+                <h2>{{ errorTitle }}</h2>
+                {% if errorMessage %}
+                <div>
+                    <b>{{ errorMessage }}</b>
+                </div>
+                {% endif %}
+                <button onclick="goToHome()">Close</button>
+                </div>
+            {% endif %}
+        </div>
+        <script>makeAsLogIn()</script>
     </body>
 </html>
